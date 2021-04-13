@@ -1,5 +1,6 @@
 const fs = require("fs/promises");
 const path = require("path");
+const Posts = require("../models/post");
 
 /*
   In node, paths depend on when the node command
@@ -35,21 +36,7 @@ const dbPath = path.resolve(__dirname, "./db.json");
   the new post if fullfilled
 */
 function insert(post) {
-  return fs.readFile(dbPath, "utf-8").then((jsonData) => {
-    const posts = JSON.parse(jsonData);
-    const newPost = {
-      ...post,
-      id: `${posts.length + 1}`,
-      createdAt: new Date().toISOString(),
-      votes: {
-        up: 0,
-        down: 0,
-      },
-    };
-    posts.push(newPost);
-    fs.writeFile(dbPath, JSON.stringify(posts));
-    return newPost;
-  });
+  return Posts.create(post);
 }
 
 /*
@@ -59,10 +46,7 @@ function insert(post) {
   if fulfilled
 */
 function findAll() {
-  return fs.readFile(dbPath, "utf-8").then((jsonData) => {
-    const posts = JSON.parse(jsonData);
-    return posts;
-  });
+  return Posts.find();
 }
 
 /*
@@ -73,15 +57,7 @@ function findAll() {
   given id exists if fullfilled
 */
 function findById(id) {
-  return fs.readFile(dbPath, "utf-8").then((jsonData) => {
-    const posts = JSON.parse(jsonData);
-
-    const post = posts.find((post) => {
-      return post.id === id;
-    });
-
-    return post;
-  });
+  return Posts.findById(id);
 }
 /*
   param id: string
@@ -95,28 +71,7 @@ function findById(id) {
   given id exists if fullfilled
 */
 function updateById(id, content) {
-  return fs.readFile(dbPath, "utf-8").then((jsonData) => {
-    const posts = JSON.parse(jsonData);
-
-    let newPost;
-    const newPosts = posts.map((post) => {
-      if (post.id === id) {
-        newPost = {
-          ...post,
-          ...content,
-        };
-        return newPost;
-      } else {
-        return post;
-      }
-    });
-
-    if (newPost) {
-      fs.writeFile(dbPath, JSON.stringify(newPosts));
-    }
-
-    return newPost;
-  });
+  return Posts.findByIdAndUpdate(id, content, { new: true });
 }
 
 /*
@@ -128,15 +83,7 @@ function updateById(id, content) {
   operation failed.
 */
 function deleteById(id) {
-  return fs.readFile(dbPath, "utf-8").then((jsonData) => {
-    const posts = JSON.parse(jsonData);
-
-    const newPosts = posts.filter((post) => {
-      return post.id !== id;
-    });
-
-    return fs.writeFile(dbPath, JSON.stringify(newPosts));
-  });
+  return Posts.deleteOne({ _id: id });
 }
 
 /*

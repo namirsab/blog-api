@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const db = require("./lib/db");
 
 /*
@@ -91,10 +92,20 @@ app.post("/posts", (req, res) => {
   });
 });
 
-/*
-  We have to start the server. We make it listen on the port 4000
+const mongoConnectionString = "mongodb://127.0.0.1:27017/blogs";
 
-*/
-app.listen(4000, () => {
-  console.log("Listening on http://localhost:4000");
+mongoose.connect(mongoConnectionString, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const mongodb = mongoose.connection;
+
+mongodb.on("open", () => {
+  /*
+    We have to start the server. We make it listen on the port 4000
+  */
+  app.listen(4000, () => {
+    console.log("Listening on http://localhost:4000");
+  });
 });
