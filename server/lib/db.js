@@ -83,6 +83,41 @@ function findById(id) {
     return post;
   });
 }
+/*
+  param id: string
+  param content: Object {
+    title: string
+    body: string,
+  }
+
+  returns a Promise containing the updated post
+  if existing or undefined if no post with the
+  given id exists if fullfilled
+*/
+function updateById(id, content) {
+  return fs.readFile(dbPath, "utf-8").then((jsonData) => {
+    const posts = JSON.parse(jsonData);
+
+    let newPost;
+    const newPosts = posts.map((post) => {
+      if (post.id === id) {
+        newPost = {
+          ...post,
+          ...content,
+        };
+        return newPost;
+      } else {
+        return post;
+      }
+    });
+
+    if (newPost) {
+      fs.writeFile(dbPath, JSON.stringify(newPosts));
+    }
+
+    return newPost;
+  });
+}
 
 /*
   param id: string
@@ -111,6 +146,7 @@ exports.insert = insert;
 exports.findAll = findAll;
 exports.findById = findById;
 exports.deleteById = deleteById;
+exports.updateById = updateById;
 
 /*
   Example Usage:
@@ -139,4 +175,12 @@ exports.deleteById = deleteById;
   db.deleteById("1").then(() => {
     console.log('deleted successfully');
   })
+
+  db.updateById("1", { body: "new content" }).then(updatedPost => {
+    if (updatedPost) {
+      // Post updated
+    } else {
+      // Post not found, hence couldn't be updated
+    }
+  });
 */
