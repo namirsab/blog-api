@@ -1,18 +1,4 @@
-const fs = require("fs/promises");
-const path = require("path");
 const Posts = require("../models/post");
-
-/*
-  In node, paths depend on when the node command
-  was executed. To be able to use a relative path
-  here to the file db.json in the same folder,
-  we need to use the path module to resolve the
-  correct path.
-  __dirname is a global variable from node that
-  contains the folder of the current module
-  path.resolve will return the correct path for us
-*/
-const dbPath = path.resolve(__dirname, "./db.json");
 
 /*
   Insert a post to the database
