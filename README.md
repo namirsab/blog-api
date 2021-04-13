@@ -6,7 +6,7 @@ To build it we are using `nodejs` together with the `express` framework.
 
 ## Links to Resources
 
-- [MDN: HTTP Overview]()
+- [MDN: HTTP Overview](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview)
 - [ExpressJS website](https://expressjs.com/)
 
 - Videos:
