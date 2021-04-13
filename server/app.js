@@ -41,6 +41,22 @@ app.get("/posts/:id", (req, res) => {
   });
 });
 
+app.patch("/posts/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.updateById(id, req.body).then((updatedPost) => {
+    if (updatedPost) {
+      res.status(200);
+      res.json(updatedPost);
+    } else {
+      res.status(404);
+      res.send({
+        error: `Post with id: ${id} not found`,
+      });
+    }
+  });
+});
+
 app.delete("/posts/:id", (req, res) => {
   const { id } = req.params;
 
