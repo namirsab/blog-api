@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -112,9 +113,9 @@ app.post("/posts/:id/comments", (req, res) => {
     });
 });
 
-const mongoConnectionString = "mongodb://127.0.0.1:27017/blogs";
+const { MONGO_URL, APP_HOST, APP_PORT } = process.env;
 
-mongoose.connect(mongoConnectionString, {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -125,7 +126,7 @@ mongodb.on("open", () => {
   /*
     We have to start the server. We make it listen on the port 4000
   */
-  app.listen(4000, () => {
-    console.log("Listening on http://localhost:4000");
+  app.listen(APP_PORT, APP_HOST, () => {
+    console.log(`Listening on http://${APP_HOST}:${APP_PORT}`);
   });
 });
