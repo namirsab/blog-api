@@ -7,8 +7,14 @@ const PostSchema = new Schema(
     title: String,
     body: String,
     votes: {
-      up: Number,
-      down: Number,
+      up: {
+        type: Number,
+        default: 0,
+      },
+      down: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {

@@ -1,6 +1,8 @@
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
-const db = require("./lib/db");
+const Comments = require("./models/comment");
+const Posts = require("./models/post");
 
 /*
   We create an express app calling
@@ -10,26 +12,18 @@ const app = express();
 
 /*
   We setup middleware to:
+  - Enable CORS requests
   - parse the body of the request to json for us
   https://expressjs.com/en/guide/using-middleware.html
 */
+app.use(cors());
 app.use(express.json());
 
-/*
-  Endpoint to handle GET requests to the root URI "/"
-*/
-app.get("/", (req, res) => {
-  res.json({
-    "/posts": "read and create new posts",
-    "/posts/:id": "read, update and delete an individual post",
-  });
-});
-
 app.get("/posts", (req, res) => {
-  db.findAll()
-    .then((data) => {
+  Posts.find()
+    .then((posts) => {
       res.status(200);
-      res.json(data);
+      res.json(posts);
     })
     .catch((error) => {
       res.status(500);
@@ -37,16 +31,23 @@ app.get("/posts", (req, res) => {
     });
 });
 
+app.post("/posts", (req, res) => {
+  Posts.create(req.body).then((newPost) => {
+    res.status(201);
+    res.json(newPost);
+  });
+});
+
 app.get("/posts/:id", (req, res) => {
   const { id } = req.params;
 
-  db.findById(id).then((post) => {
+  Posts.findById(id).then((post) => {
     if (post) {
       res.status(200);
       res.json(post);
     } else {
       res.status(404);
-      res.send({
+      res.json({
         error: `Post with id: ${id} not found`,
       });
     }
@@ -56,13 +57,13 @@ app.get("/posts/:id", (req, res) => {
 app.patch("/posts/:id", (req, res) => {
   const { id } = req.params;
 
-  db.updateById(id, req.body).then((updatedPost) => {
+  Posts.findByIdAndUpdate(id, req.body, { new: true }).then((updatedPost) => {
     if (updatedPost) {
       res.status(200);
       res.json(updatedPost);
     } else {
       res.status(404);
-      res.send({
+      res.json({
         error: `Post with id: ${id} not found`,
       });
     }
@@ -72,10 +73,10 @@ app.patch("/posts/:id", (req, res) => {
 app.delete("/posts/:id", (req, res) => {
   const { id } = req.params;
 
-  db.deleteById(id)
+  Posts.deleteOne({ _id: id })
     .then(() => {
-      res.status(200);
-      res.send();
+      res.status(204);
+      res.json();
     })
     .catch((error) => {
       res.status(500);
@@ -85,11 +86,30 @@ app.delete("/posts/:id", (req, res) => {
     });
 });
 
-app.post("/posts", (req, res) => {
-  db.insert(req.body).then((newPost) => {
-    res.status(201);
-    res.json(newPost);
+app.get("/posts/:id/comments", (req, res) => {
+  const { id } = req.params;
+
+  Comments.find({ postId: id }).then((comments) => {
+    res.status(200);
+    res.json(comments);
   });
+});
+
+app.post("/posts/:id/comments", (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+
+  Comments.create({ text, postId: id })
+    .then((newComment) => {
+      res.status(201);
+      res.json(newComment);
+    })
+    .catch((error) => {
+      res.status(500);
+      res.json({
+        error,
+      });
+    });
 });
 
 const mongoConnectionString = "mongodb://127.0.0.1:27017/blogs";
