@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const db = require("./lib/db");
+
+const mongoose = require("mongoose");
+const Post = require("./models/post");
 
 /*
   We create an express app calling
@@ -26,10 +28,10 @@ app.use((req, res, next) => {
 */
 
 app.get("/posts", (req, res) => {
-  db.findAll()
-    .then((data) => {
+  Post.find()
+    .then((posts) => {
       res.status(200);
-      res.json(data);
+      res.json(posts);
     })
     .catch((error) => {
       res.status(500);
@@ -86,7 +88,7 @@ app.delete("/posts/:id", (req, res) => {
 });
 
 app.post("/posts", (req, res) => {
-  db.insert(req.body).then((newPost) => {
+  Post.create(req.body).then((newPost) => {
     res.status(201);
     res.json(newPost);
   });
@@ -96,6 +98,17 @@ app.post("/posts", (req, res) => {
   We have to start the server. We make it listen on the port 4000
 
 */
-app.listen(4000, () => {
-  console.log("Listening on http://localhost:4000");
+
+// localhost = 127.0.0.1
+mongoose.connect("mongodb://localhost/blogs", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const mongodb = mongoose.connection;
+
+mongodb.on("open", () => {
+  app.listen(4000, () => {
+    console.log("Listening on http://localhost:4000");
+  });
 });
