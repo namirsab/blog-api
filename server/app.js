@@ -17,12 +17,6 @@ app.use(express.json());
 /*
   Endpoint to handle GET requests to the root URI "/"
 */
-app.get("/", (req, res) => {
-  res.json({
-    "/posts": "read and create new posts",
-    "/posts/:id": "read, update and delete an individual post",
-  });
-});
 
 app.get("/posts", (req, res) => {
   db.findAll()
@@ -45,7 +39,7 @@ app.get("/posts/:id", (req, res) => {
       res.json(post);
     } else {
       res.status(404);
-      res.send({
+      res.json({
         error: `Post with id: ${id} not found`,
       });
     }
@@ -61,7 +55,7 @@ app.patch("/posts/:id", (req, res) => {
       res.json(updatedPost);
     } else {
       res.status(404);
-      res.send({
+      res.json({
         error: `Post with id: ${id} not found`,
       });
     }
@@ -74,7 +68,7 @@ app.delete("/posts/:id", (req, res) => {
   db.deleteById(id)
     .then(() => {
       res.status(200);
-      res.send();
+      res.json();
     })
     .catch((error) => {
       res.status(500);
