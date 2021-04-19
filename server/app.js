@@ -1,3 +1,4 @@
+// Load the environment variables defined in the .env file
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -113,9 +114,16 @@ app.post("/posts/:id/comments", (req, res) => {
     });
 });
 
-const { MONGO_URL, PORT = 5000 } = process.env;
+const { PORT } = process.env;
+/*
+{
+  USER: "namirsab",
+  COMMAND_MODE: "unix2003",
+  PORT: 4000
+}
+*/
 
-mongoose.connect(MONGO_URL, {
+mongoose.connect("mongodb://localhost/blogs", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -124,7 +132,7 @@ const mongodb = mongoose.connection;
 
 mongodb.on("open", () => {
   /*
-    We have to start the server. We make it listen on the port 4000
+    We have to start the server. We make it listen on the port
   */
   app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
