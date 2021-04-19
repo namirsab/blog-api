@@ -114,7 +114,7 @@ app.post("/posts/:id/comments", (req, res) => {
     });
 });
 
-const { PORT } = process.env;
+const { PORT, MONGO_URL } = process.env;
 /*
 {
   USER: "namirsab",
@@ -123,7 +123,9 @@ const { PORT } = process.env;
 }
 */
 
-mongoose.connect("mongodb://localhost/blogs", {
+console.log(MONGO_URL);
+
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
