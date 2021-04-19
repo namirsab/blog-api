@@ -126,7 +126,7 @@ mongodb.on("open", () => {
   /*
     We have to start the server. We make it listen on the port 4000
   */
-  app.listen(APP_PORT, () => {
+  app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
   });
 });
