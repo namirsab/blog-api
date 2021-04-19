@@ -113,7 +113,7 @@ app.post("/posts/:id/comments", (req, res) => {
     });
 });
 
-const { MONGO_URL, APP_HOST, APP_PORT } = process.env;
+const { MONGO_URL, PORT = 5000 } = process.env;
 
 mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
@@ -126,7 +126,7 @@ mongodb.on("open", () => {
   /*
     We have to start the server. We make it listen on the port 4000
   */
-  app.listen(APP_PORT, APP_HOST, () => {
-    console.log(`Listening on http://${APP_HOST}:${APP_PORT}`);
+  app.listen(APP_PORT, () => {
+    console.log(`Listening on port ${PORT}`);
   });
 });
